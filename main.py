@@ -74,5 +74,21 @@ def transform_data():
     return df_db
 
 
+# Carga de datos transformados de Sakila a BigQuery
+def load_data_to_bq(project_id, if_exists, credentials):
+    df_db = transform_data()
+    if len(df_db) > 0:
+        pd_gbq.to_gbq(
+            df_db,
+            SAKILA_TABLE_ID,
+            project_id,
+            if_exists=if_exists,
+            credentials=credentials
+        )
+        print("Datos de Sakila añadidos exitosamente a BigQuery.")
+    else:
+        print("Nos se pudo actualizar: No hay datos de Sakila para cargar a BigQuery.")
+
+
 if __name__ == "__main__":
-    transform_data()
+    load_data_to_bq(PROJECT_ID, "replace", CREDENTIALS)
