@@ -49,19 +49,30 @@ def get_data_from_sakila(query):
             print("Conexión cerrada.")
 
 
+# Transformación de datos de Sakila
+def transform_data():
+    try:
+        query = """
+                    SELECT c.customer_id,
+                           INITCAP(c.first_name) AS first_name,
+                           INITCAP(c.last_name) AS last_name,
+                           c.email,
+                           c.create_date::DATE AS just_date,
+                           f.title,
+                           f.description,
+                           f.rating
+                    FROM sakila.customer AS c
+                    INNER JOIN sakila.rental AS r ON c.customer_id = r.customer_id
+                    INNER JOIN sakila.inventory AS i ON r.inventory_id = i.inventory_id
+                    INNER JOIN sakila.film AS f ON i.film_id = f.film_id
+                """
+        data = get_data_from_sakila(query)
+        df_db = pd.DataFrame(data, columns=COLUMNS_ORDER_SAKILA)
+    except Exception as e:
+        print(f"Ocurrió un error en la función transform_data: {e}")
+    
+    return df_db
+
+
 if __name__ == "__main__":
-    query = """
-                SELECT c.customer_id,
-                        c.first_name,
-                        c.last_name,
-                        c.email,
-                        c.create_date,
-                        f.title,
-                        f.description,
-                        f.rating
-                FROM sakila.customer AS c
-                INNER JOIN sakila.rental AS r ON c.customer_id = r.customer_id
-                INNER JOIN sakila.inventory AS i ON r.inventory_id = i.inventory_id
-                INNER JOIN sakila.film AS f ON i.film_id = f.film_id
-            """
-    get_data_from_sakila(query)
+    transform_data()
