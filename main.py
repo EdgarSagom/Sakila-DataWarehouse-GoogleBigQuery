@@ -29,3 +29,39 @@ SAKILA_SCHEMA = [
 ]
 COLUMNS_ORDER_SAKILA = [col["name"] for col in SAKILA_SCHEMA]
 
+
+# Extracción de datos de Sakila
+def get_data_from_sakila(query):
+    try:
+        connection = psycopg2.connect(DATABASE_URI)
+        cursor = connection.cursor()
+        cursor.execute(query)
+        results = cursor.fetchall()
+        pprint(results[0:5])
+        return results
+    except Exception as e:
+        print(f"Ocurrió un error en la función get_data_from_sakila: {e}")
+        return None
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+            print("Conexión cerrada.")
+
+
+if __name__ == "__main__":
+    query = """
+                SELECT c.customer_id,
+                        c.first_name,
+                        c.last_name,
+                        c.email,
+                        c.create_date,
+                        f.title,
+                        f.description,
+                        f.rating
+                FROM sakila.customer AS c
+                INNER JOIN sakila.rental AS r ON c.customer_id = r.customer_id
+                INNER JOIN sakila.inventory AS i ON r.inventory_id = i.inventory_id
+                INNER JOIN sakila.film AS f ON i.film_id = f.film_id
+            """
+    get_data_from_sakila(query)
