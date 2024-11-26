@@ -20,4 +20,3 @@ nos permita obtener todas las rentas por cada cliente. Considerar los siguiente:
 
 IMPORTANTE: Para revisar la porción del esquema que te ayudará a construir la consulta SQL, puedes consultar la siguiente imagen:
 ![](./src/sakila.png)
-"""
